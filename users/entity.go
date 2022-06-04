@@ -1,8 +1,8 @@
-package models
+package user
 
 import "time"
 
-type user struct {
+type User struct {
 	Id             int
 	Name           string
 	Occupation     string
