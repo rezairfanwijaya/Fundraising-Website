@@ -1,37 +1,32 @@
 package main
 
 import (
-	"net/http"
+	"fmt"
+	"log"
 
-	"github.com/gin-gonic/gin"
-	models "github.com/rezairfanwijaya/Fundraising-Website/User"
+	user "github.com/rezairfanwijaya/Fundraising-Website/users"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 func main() {
 	// connect ke database
-	r := gin.Default()
-
-	r.GET("/", ShowAll)
-
-	r.Run(":7070")
-
-}
-
-func ShowAll(c *gin.Context) {
-	dsn := "root@tcp(127.0.0.2:3306)/fundraishing?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:@tcp(127.0.0.1:3306)/fundraishing?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic(err)
+		log.Fatal(err.Error())
 	}
 
-	var users []models.User
+	userRepo := user.NewRepository(db)
+	newUser := user.User{
+		Id:   3,
+		Name: "skuteowro",
+	}
 
-	db.Find(&users)
+	res, err := userRepo.Save(newUser)
+	if err != nil {
+		log.Printf("Failed Save: %v", err)
+	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"data": users,
-		"code": http.StatusOK,
-	})
+	fmt.Println(res)
 }
