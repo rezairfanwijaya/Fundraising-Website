@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rezairfanwijaya/Fundraising-Website/models"
+	models "github.com/rezairfanwijaya/Fundraising-Website/User"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -26,12 +26,12 @@ func ShowAll(c *gin.Context) {
 		panic(err)
 	}
 
-	var user []models.User
+	var users []models.User
 
-	db.Find(&user)
+	db.Find(&users)
 
 	c.JSON(http.StatusOK, gin.H{
-		"data": user,
+		"data": users,
 		"code": http.StatusOK,
 	})
 }
