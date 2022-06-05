@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	user "github.com/rezairfanwijaya/Fundraising-Website/users"
@@ -17,16 +16,16 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
+	// repo user
 	userRepo := user.NewRepository(db)
-	newUser := user.User{
-		Id:   3,
-		Name: "skuteowro",
-	}
+	// service user
+	userService := user.NewService(userRepo)
 
-	res, err := userRepo.Save(newUser)
-	if err != nil {
-		log.Printf("Failed Save: %v", err)
-	}
-
-	fmt.Println(res)
+	// input register user
+	var newUser user.RegisterUserInput
+	newUser.Name = "Reza Irfan Abdas"
+	newUser.Occupation = "Mahasiswa"
+	newUser.Email = "rezairfanabdas@gmail.com"
+	newUser.Password = "123"
+	userService.RegisterUser(newUser)
 }
