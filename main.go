@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 
+	"github.com/gin-gonic/gin"
+	"github.com/rezairfanwijaya/Fundraising-Website/handler"
 	user "github.com/rezairfanwijaya/Fundraising-Website/users"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -20,12 +22,16 @@ func main() {
 	userRepo := user.NewRepository(db)
 	// service user
 	userService := user.NewService(userRepo)
+	// handler user
+	userHandler := handler.NewUserHandler(userService)
 
-	// input register user
-	var newUser user.RegisterUserInput
-	newUser.Name = "Reza Irfan Abdas"
-	newUser.Occupation = "Mahasiswa"
-	newUser.Email = "rezairfanabdas@gmail.com"
-	newUser.Password = "123"
-	userService.RegisterUser(newUser)
+	// http server
+	router := gin.Default()
+	// api versioning
+	api := router.Group("api/v1")
+	// routing
+	api.POST("/user", userHandler.RegisterUser)
+
+	// run server
+	router.Run(":7070")
 }
