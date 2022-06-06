@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	helper "github.com/rezairfanwijaya/Fundraising-Website/helper"
 	user "github.com/rezairfanwijaya/Fundraising-Website/users"
 )
 
@@ -44,9 +45,7 @@ func (u *userHandler) RegisterUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Berhasil menyimpan data ke server",
-		"code":    http.StatusOK,
-		"data":    newUser,
-	})
+	respons := helper.ResponsAPI("Berhasil menyimpan data", "sukses", http.StatusOK, newUser)
+
+	c.JSON(http.StatusOK, respons)
 }
