@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	helper "github.com/rezairfanwijaya/Fundraising-Website/helper"
 	user "github.com/rezairfanwijaya/Fundraising-Website/users"
 )
@@ -28,13 +27,9 @@ func (u *userHandler) RegisterUser(c *gin.Context) {
 	// binding
 	err := c.ShouldBindJSON(&inputUser)
 	if err != nil {
-		// bikin variable untuk menampung error
-		var errors []string
 
-		// ambil error
-		for _, e := range err.(validator.ValidationErrors) {
-			errors = append(errors, e.Error())
-		}
+		// panggil function di helper untuk mengolah error
+		errors := helper.ErrorFormater(err)
 
 		// bikin format json baru untuk masuk ke data di responsAPI
 		myErr := gin.H{"error": errors}

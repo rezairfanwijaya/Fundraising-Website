@@ -1,5 +1,7 @@
 package helper
 
+import "github.com/go-playground/validator/v10"
+
 // disini kita akan membuat response dari json ketika user berhasil ataupun gagal meng-hit endpoint yang telah disediakan
 
 /*
@@ -43,4 +45,15 @@ func ResponsAPI(message, status string, code int, data interface{}) respons {
 	}
 
 	return responsAPI
+}
+
+// format error
+func ErrorFormater(err error) []string {
+	var myerror []string
+
+	for _, e := range err.(validator.ValidationErrors) {
+		myerror = append(myerror, e.Error())
+	}
+
+	return myerror
 }
