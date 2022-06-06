@@ -27,9 +27,8 @@ func (u *userHandler) RegisterUser(c *gin.Context) {
 	// binding
 	err := c.ShouldBindJSON(&inputUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "gagal binding",
-		})
+		respons := helper.ResponsAPI("Gagal menyimpan data", "Gagal", http.StatusBadRequest, nil)
+		c.JSON(http.StatusBadRequest, respons)
 
 		return
 	}
@@ -37,10 +36,8 @@ func (u *userHandler) RegisterUser(c *gin.Context) {
 	// save ke database
 	newUser, err := u.userService.RegisterUser(inputUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Gagal menyimpan data ke server",
-			"code":    http.StatusInternalServerError,
-		})
+		respons := helper.ResponsAPI("Gagal menyimpan data", "Gagal", http.StatusBadRequest, nil)
+		c.JSON(http.StatusBadRequest, respons)
 
 		return
 	}
@@ -48,7 +45,7 @@ func (u *userHandler) RegisterUser(c *gin.Context) {
 	// sebelum di tampilkan data ke user maka data User dari inputan user harus kita formating dulu sesuai yg diminta pada helper
 	userFormat := user.UserFormatter(newUser, "tokenuser")
 
-	respons := helper.ResponsAPI("Berhasil menyimpan data", "sukses", http.StatusOK, userFormat)
+	respons := helper.ResponsAPI("Berhasil menyimpan data", "sukses", http.StatusBadRequest, userFormat)
 
 	c.JSON(http.StatusOK, respons)
 }
