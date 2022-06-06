@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	helper "github.com/rezairfanwijaya/Fundraising-Website/helper"
 	user "github.com/rezairfanwijaya/Fundraising-Website/users"
 )
@@ -27,8 +28,20 @@ func (u *userHandler) RegisterUser(c *gin.Context) {
 	// binding
 	err := c.ShouldBindJSON(&inputUser)
 	if err != nil {
-		respons := helper.ResponsAPI("Gagal menyimpan data", "Gagal", http.StatusBadRequest, nil)
-		c.JSON(http.StatusBadRequest, respons)
+		// bikin variable untuk menampung error
+		var errors []string
+
+		// ambil error
+		for _, e := range err.(validator.ValidationErrors) {
+			errors = append(errors, e.Error())
+		}
+
+		// bikin format json baru untuk masuk ke data di responsAPI
+		myErr := gin.H{"error": errors}
+
+		// masukan error ke responsAPI
+		respons := helper.ResponsAPI("Gagal menyimpan data", "Gagal", http.StatusUnprocessableEntity, myErr)
+		c.JSON(http.StatusUnprocessableEntity, respons)
 
 		return
 	}
@@ -45,7 +58,7 @@ func (u *userHandler) RegisterUser(c *gin.Context) {
 	// sebelum di tampilkan data ke user maka data User dari inputan user harus kita formating dulu sesuai yg diminta pada helper
 	userFormat := user.UserFormatter(newUser, "tokenuser")
 
-	respons := helper.ResponsAPI("Berhasil menyimpan data", "sukses", http.StatusBadRequest, userFormat)
+	respons := helper.ResponsAPI("Berhasil menyimpan data", "sukses", http.StatusOK, userFormat)
 
 	c.JSON(http.StatusOK, respons)
 }
