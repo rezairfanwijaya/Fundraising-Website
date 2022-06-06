@@ -45,7 +45,10 @@ func (u *userHandler) RegisterUser(c *gin.Context) {
 		return
 	}
 
-	respons := helper.ResponsAPI("Berhasil menyimpan data", "sukses", http.StatusOK, newUser)
+	// sebelum di tampilkan data ke user maka data User dari inputan user harus kita formating dulu sesuai yg diminta pada helper
+	userFormat := user.UserFormatter(newUser, "tokenuser")
+
+	respons := helper.ResponsAPI("Berhasil menyimpan data", "sukses", http.StatusOK, userFormat)
 
 	c.JSON(http.StatusOK, respons)
 }
