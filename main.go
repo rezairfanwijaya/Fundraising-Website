@@ -24,16 +24,19 @@ func main() {
 	userService := user.NewService(userRepo)
 	// handler user
 	userHandler := handler.NewUserHandler(userService)
-	user, err := userRepo.FindEmail("ressza@gmail.com")
-	if err != nil {
-		log.Println(err.Error())
+
+	loginInput := user.LoginInput{
+		Email:    "reza@gmail.com",
+		Password: "1234567",
 	}
 
-	if user.Id != 0 {
-		log.Println(user)
-	}else {
-		log.Println("user tidak ditemukan")
+	user, err := userService.Login(loginInput)
+	if err != nil {
+		log.Printf("error : %v", err)
+		return
 	}
+
+	log.Println(user.Name)
 
 	// http server
 	router := gin.Default()

@@ -1,10 +1,15 @@
 package user
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"errors"
+
+	"golang.org/x/crypto/bcrypt"
+)
 
 // buat interface service, yang berisi kontrak dari aktifitas user di website (register, login, etc)
 type Service interface {
 	RegisterUser(user RegisterUserInput) (User, error)
+	Login(inputLogin LoginInput) (User, error)
 }
 
 // buat internal struct untuk menampung repository, kita butuh repositoy agar bisa mengakses koneksi database dan juga function save data ke database
@@ -17,6 +22,7 @@ func NewService(repository Repository) *service {
 	return &service{repository}
 }
 
+// function untuk register user
 func (s *service) RegisterUser(input RegisterUserInput) (User, error) {
 
 	// proses maping struct input user ke struct representasi tabel user
@@ -40,4 +46,32 @@ func (s *service) RegisterUser(input RegisterUserInput) (User, error) {
 	}
 
 	return newUser, nil
+}
+
+// function untuk login user
+func (s *service) Login(inputLogin LoginInput) (User, error) {
+	// kita ambil email dan password yang diinput user
+	email := inputLogin.Email
+	password := inputLogin.Password
+
+	// cek email
+	user, err := s.repository.FindEmail(email)
+	if err != nil {
+		return user, err
+	}
+
+	// jika email tidak ketemua (id=0)
+	if user.Id == 0 {
+		return user, errors.New("Email tidak cocok")
+	}
+
+	// jika ditemukan maka cek passwordnya
+	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
+	if err != nil {
+		return user, errors.New("Password salah")
+	}
+
+	// jika lolos validasi email dan password
+	return user, nil
+
 }
