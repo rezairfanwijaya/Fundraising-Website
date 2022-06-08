@@ -25,6 +25,16 @@ func NewService(repository Repository) *service {
 // function untuk register user
 func (s *service) RegisterUser(input RegisterUserInput) (User, error) {
 
+	// cek apakah email sudah terdaftar atau belum
+	userFromDB, err := s.repository.FindEmail(input.Email)
+	if err != nil {
+		return User{}, err
+	}
+
+	if userFromDB.Id != 0 {
+		return User{}, errors.New("email telah terdaftar")
+	}
+
 	// proses maping struct input user ke struct representasi tabel user
 	var user User
 	user.Name = input.Name

@@ -44,7 +44,7 @@ func (u *userHandler) RegisterUser(c *gin.Context) {
 	// save ke database
 	newUser, err := u.userService.RegisterUser(inputUser)
 	if err != nil {
-		respons := helper.ResponsAPI("Gagal menyimpan data", "Gagal", http.StatusBadRequest, nil)
+		respons := helper.ResponsAPI("Gagal menyimpan data", "Gagal", http.StatusBadRequest, err.Error())
 		c.JSON(http.StatusBadRequest, respons)
 
 		return
