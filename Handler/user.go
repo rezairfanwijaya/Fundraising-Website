@@ -57,3 +57,39 @@ func (u *userHandler) RegisterUser(c *gin.Context) {
 
 	c.JSON(http.StatusOK, respons)
 }
+
+// bikin handler login
+func (u *userHandler) LoginUser(c *gin.Context) {
+
+	// definisikan struct input login
+	var input user.LoginInput
+
+	// binding
+	err := c.ShouldBindJSON(&input)
+	if err != nil {
+
+		// panggil error formater
+		myError := helper.ErrorFormater(err)
+
+		// masukan ke template respons API
+		response := helper.ResponsAPI("Login gagal", "Gagal", http.StatusUnprocessableEntity, myError)
+
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	// cek email dan password
+	loggedUser, err := u.userService.Login(input)
+	if err != nil {
+		response := helper.ResponsAPI("Login gagal", "Gagal", http.StatusUnprocessableEntity, err.Error())
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	// jika email dan password cocok maka user harus diformat terlebih dahulu
+	formatUser := user.UserFormatter(loggedUser, "tokentokentoken")
+
+	// lalu masukan ke respons
+	response := helper.ResponsAPI("Login berhasil", "Sukses", http.StatusOK, formatUser)
+	c.JSON(http.StatusUnprocessableEntity, response)
+}

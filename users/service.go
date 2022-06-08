@@ -62,13 +62,13 @@ func (s *service) Login(inputLogin LoginInput) (User, error) {
 
 	// jika email tidak ketemua (id=0)
 	if user.Id == 0 {
-		return user, errors.New("Email tidak cocok")
+		return user, errors.New("email tidak cocok")
 	}
 
 	// jika ditemukan maka cek passwordnya
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
 	if err != nil {
-		return user, errors.New("Password salah")
+		return user, errors.New("password salah")
 	}
 
 	// jika lolos validasi email dan password

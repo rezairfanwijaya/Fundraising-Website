@@ -25,25 +25,13 @@ func main() {
 	// handler user
 	userHandler := handler.NewUserHandler(userService)
 
-	loginInput := user.LoginInput{
-		Email:    "reza@gmail.com",
-		Password: "1234567",
-	}
-
-	user, err := userService.Login(loginInput)
-	if err != nil {
-		log.Printf("error : %v", err)
-		return
-	}
-
-	log.Println(user.Name)
-
 	// http server
 	router := gin.Default()
 	// api versioning
 	api := router.Group("api/v1")
 	// routing
 	api.POST("/user", userHandler.RegisterUser)
+	api.POST("/session", userHandler.LoginUser)
 
 	// run server
 	router.Run(":7070")
