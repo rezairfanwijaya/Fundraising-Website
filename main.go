@@ -32,7 +32,8 @@ func main() {
 	// routing
 	api.POST("/user", userHandler.RegisterUser)
 	api.POST("/session", userHandler.LoginUser)
-	api.GET("/email", userHandler.CheckEmail)
+	api.POST("/email", userHandler.CheckEmail)
+	api.POST("/avatar", userHandler.UpdateAvatar)
 
 	// run server
 	router.Run(":7070")

@@ -122,3 +122,48 @@ func (u *userHandler) CheckEmail(c *gin.Context) {
 	respons := helper.ResponsAPI("Email Diterima", "Sukses", http.StatusOK, data)
 	c.JSON(http.StatusOK, respons)
 }
+
+// handler update avatar
+func (u *userHandler) UpdateAvatar(c *gin.Context) {
+	// kita harus tangkap file gambar yang diupload oleh user
+	file, err := c.FormFile("avatar") // string avatar harus sama dengan atribut name di tag input html
+	if err != nil {
+		respons := helper.ResponsAPI("Avatar gagal diupload", "Gagal", http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, respons)
+		return
+	}
+
+	// kita harus menyimpan file gambar di local kita
+	// file.Filename adalah nama gambar yang diupload user (john.png)
+	path := "images/" + file.Filename
+
+	// proses simpan gambar ka local
+	err = c.SaveUploadedFile(file, path)
+	if err != nil {
+		data := gin.H{
+			"is_uploaded": false,
+		}
+		respons := helper.ResponsAPI("Avatar gagal diupload", "Gagal", http.StatusBadRequest, data)
+		c.JSON(http.StatusBadRequest, respons)
+		return
+	}
+
+	// proses update file
+	userID := 2
+	_, err = u.userService.UpdateAvatar(userID, path)
+	if err != nil {
+		data := gin.H{
+			"is_uploaded": false,
+		}
+		respons := helper.ResponsAPI("Avatar gagal diupload", "Gagal", http.StatusBadRequest, data)
+		c.JSON(http.StatusBadRequest, respons)
+		return
+	}
+	data := gin.H{
+		"is_uploaded": true,
+	}
+
+	respons := helper.ResponsAPI("Avatar berhasil diupload", "Sukses", http.StatusOK, data)
+	c.JSON(http.StatusOK, respons)
+
+}
