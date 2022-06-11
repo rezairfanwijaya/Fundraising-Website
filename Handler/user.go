@@ -93,3 +93,32 @@ func (u *userHandler) LoginUser(c *gin.Context) {
 	response := helper.ResponsAPI("Login berhasil", "Sukses", http.StatusOK, formatUser)
 	c.JSON(http.StatusUnprocessableEntity, response)
 }
+
+// handler check email
+func (u *userHandler) CheckEmail(c *gin.Context) {
+	// inisiasi email input
+	var email user.EmailInput
+
+	// binding
+	err := c.ShouldBindJSON(&email)
+	if err != nil {
+		myErr := helper.ErrorFormater(err)
+		respons := helper.ResponsAPI("Gagal cek email", "Gagal", http.StatusUnprocessableEntity, myErr)
+		c.JSON(http.StatusUnprocessableEntity, respons)
+		return
+	}
+
+	// cek email
+	_, err = u.userService.EmailIsAvaliable(email)
+	if err != nil {
+		respons := helper.ResponsAPI("Email Telah Terpakai", "Gagal", http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, respons)
+		return
+	}
+
+	data := gin.H{
+		"message": "Email diperbolehkan",
+	}
+	respons := helper.ResponsAPI("Email Diterima", "Sukses", http.StatusOK, data)
+	c.JSON(http.StatusOK, respons)
+}

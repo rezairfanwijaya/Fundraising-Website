@@ -10,6 +10,7 @@ import (
 type Service interface {
 	RegisterUser(user RegisterUserInput) (User, error)
 	Login(inputLogin LoginInput) (User, error)
+	EmailIsAvaliable(inputEmail EmailInput) (User, error)
 }
 
 // buat internal struct untuk menampung repository, kita butuh repositoy agar bisa mengakses koneksi database dan juga function save data ke database
@@ -84,4 +85,22 @@ func (s *service) Login(inputLogin LoginInput) (User, error) {
 	// jika lolos validasi email dan password
 	return user, nil
 
+}
+
+func (s *service) EmailIsAvaliable(inputEmail EmailInput) (User, error) {
+	// ambil email
+	email := inputEmail.Email
+
+	// cari email
+	user, err := s.repository.FindEmail(email)
+	if err != nil {
+		return user, err
+	}
+
+	// jika email sudah ada
+	if user.Id != 0 {
+		return user, errors.New("Email sudah terdaftar")
+	}
+
+	return user, nil
 }
