@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rezairfanwijaya/Fundraising-Website/auth"
 	"github.com/rezairfanwijaya/Fundraising-Website/handler"
 	user "github.com/rezairfanwijaya/Fundraising-Website/users"
 	"gorm.io/driver/mysql"
@@ -22,8 +23,10 @@ func main() {
 	userRepo := user.NewRepository(db)
 	// service user
 	userService := user.NewService(userRepo)
+	// service auth
+	authService := auth.NewServiceAuth()
 	// handler user
-	userHandler := handler.NewUserHandler(userService)
+	userHandler := handler.NewUserHandler(userService, authService)
 
 	// http server
 	router := gin.Default()

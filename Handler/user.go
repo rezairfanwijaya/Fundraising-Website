@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rezairfanwijaya/Fundraising-Website/auth"
 	helper "github.com/rezairfanwijaya/Fundraising-Website/helper"
 	user "github.com/rezairfanwijaya/Fundraising-Website/users"
 )
@@ -11,12 +12,13 @@ import (
 // bikin struct internal userHandler yang akan menyimpan service dari user yang di dalam nya berisi akses save data ke database
 
 type userHandler struct {
-	userService user.Service
+	userService  user.Service
+	tokenservice auth.Service
 }
 
 // bikin NewUserHandler untuk membuat userHandler berfungsi di main
-func NewUserHandler(userService user.Service) *userHandler {
-	return &userHandler{userService}
+func NewUserHandler(userService user.Service, tokenService auth.Service) *userHandler {
+	return &userHandler{userService, tokenService}
 }
 
 // bikin handler register
@@ -50,8 +52,15 @@ func (u *userHandler) RegisterUser(c *gin.Context) {
 		return
 	}
 
+	// generate token
+	token, err := u.tokenservice.GenerateToken(newUser.Id)
+	if err != nil {
+		respons := helper.ResponsAPI("Gagal membuat token", "Gagal", http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, respons)
+	}
+
 	// sebelum di tampilkan data ke user maka data User dari inputan user harus kita formating dulu sesuai yg diminta pada helper
-	userFormat := user.UserFormatter(newUser, "tokenuser")
+	userFormat := user.UserFormatter(newUser, token)
 
 	respons := helper.ResponsAPI("Berhasil menyimpan data", "sukses", http.StatusOK, userFormat)
 
@@ -86,8 +95,16 @@ func (u *userHandler) LoginUser(c *gin.Context) {
 		return
 	}
 
+	// generate token
+	token, err := u.tokenservice.GenerateToken(loggedUser.Id)
+	if err != nil {
+		respons := helper.ResponsAPI("Gagal membuat toke", "Gagal", http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, respons)
+		return
+	}
+
 	// jika email dan password cocok maka user harus diformat terlebih dahulu
-	formatUser := user.UserFormatter(loggedUser, "tokentokentoken")
+	formatUser := user.UserFormatter(loggedUser, token)
 
 	// lalu masukan ke respons
 	response := helper.ResponsAPI("Login berhasil", "Sukses", http.StatusOK, formatUser)
