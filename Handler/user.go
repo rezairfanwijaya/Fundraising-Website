@@ -166,7 +166,10 @@ func (u *userHandler) UpdateAvatar(c *gin.Context) {
 	}
 
 	// proses update file
-	userID := 2
+	// kita tentuin siapa user yang akan mengupate avatar, ini didapat melalui id yang sudah disimpan didalam context ketika melwati middleware. Jadi kita tinggal ambil context nya saja
+	currentUser := c.MustGet("currentUser").(user.User)
+	userID := currentUser.Id
+
 	_, err = u.userService.UpdateAvatar(userID, path)
 	if err != nil {
 		data := gin.H{

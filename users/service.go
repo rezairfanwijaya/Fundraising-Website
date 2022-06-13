@@ -12,6 +12,7 @@ type Service interface {
 	Login(inputLogin LoginInput) (User, error)
 	EmailIsAvaliable(inputEmail EmailInput) (User, error)
 	UpdateAvatar(id int, filelocation string) (User, error)
+	GetUserByID(id int) (User, error)
 }
 
 // buat internal struct untuk menampung repository, kita butuh repositoy agar bisa mengakses koneksi database dan juga function save data ke database
@@ -125,4 +126,21 @@ func (s *service) UpdateAvatar(id int, filelocation string) (User, error) {
 	}
 
 	return newUser, nil
+}
+
+// function untuk mencari user berdasarkan id
+func (s *service) GetUserByID(id int) (User, error) {
+	// panggil repo findbyid
+	user, err := s.repository.FindById(id)
+	if err != nil {
+		return user, err
+	}
+
+	// cek id, jika 0 berarti ga ada user
+	if user.Id == 0 {
+		return user, errors.New("id tidak ditemukan")
+	}
+
+	return user, nil
+
 }
