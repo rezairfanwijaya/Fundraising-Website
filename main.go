@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -8,6 +9,7 @@ import (
 	"github.com/dgrijalva/jwt-go/v4"
 	"github.com/gin-gonic/gin"
 	"github.com/rezairfanwijaya/Fundraising-Website/auth"
+	"github.com/rezairfanwijaya/Fundraising-Website/campaign"
 	"github.com/rezairfanwijaya/Fundraising-Website/handler"
 	"github.com/rezairfanwijaya/Fundraising-Website/helper"
 	user "github.com/rezairfanwijaya/Fundraising-Website/users"
@@ -31,6 +33,34 @@ func main() {
 	authService := auth.NewServiceAuth()
 	// handler user
 	userHandler := handler.NewUserHandler(userService, authService)
+
+	campaignRepo := campaign.NewRepository(db)
+	camp, err := campaignRepo.FindAll()
+	if err != nil {
+		log.Fatalf("error: %v", err)
+	}
+
+	for _, v := range camp {
+		if len(v.CampaignImages) > 0 {
+			fmt.Println(v.Name, v.CampaignImages[0].FileName)
+		} else {
+			fmt.Println(v.Name)
+		}
+	}
+
+	// id, err := campaignRepo.FindByUserId(1)
+	// if err != nil {
+	// 	log.Fatalf("error: %v", err)
+	// }
+
+	// for _, v := range id {
+	// 	fmt.Println(v.Description)
+	// 	if len(v.CampaignImages) > 0 {
+	// 		fmt.Println(v.CampaignImages[0].FileName)
+	// 	}
+	// }
+
+	return
 
 	// http server
 	router := gin.Default()
