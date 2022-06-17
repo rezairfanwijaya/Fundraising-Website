@@ -9,6 +9,7 @@ import (
 	"github.com/dgrijalva/jwt-go/v4"
 	"github.com/gin-gonic/gin"
 	"github.com/rezairfanwijaya/Fundraising-Website/auth"
+
 	// "github.com/rezairfanwijaya/Fundraising-Website/campaign"
 	"github.com/rezairfanwijaya/Fundraising-Website/handler"
 	"github.com/rezairfanwijaya/Fundraising-Website/helper"
@@ -35,31 +36,13 @@ func main() {
 	userHandler := handler.NewUserHandler(userService, authService)
 
 	// campaignRepo := campaign.NewRepository(db)
-	// camp, err := campaignRepo.FindAll()
+	// campaignService := campaign.NewService(campaignRepo)
+	// campaign, err := campaignService.GetCampaigns(2)
 	// if err != nil {
 	// 	log.Fatalf("error: %v", err)
 	// }
 
-	// for _, v := range camp {
-	// 	if len(v.CampaignImages) > 0 {
-	// 		fmt.Println(v.Name, v.CampaignImages[0].FileName)
-	// 	} else {
-	// 		fmt.Println(v.Name)
-	// 	}
-	// }
-
-	// id, err := campaignRepo.FindByUserId(1)
-	// if err != nil {
-	// 	log.Fatalf("error: %v", err)
-	// }
-
-	// for _, v := range id {
-	// 	fmt.Println(v.Description)
-	// 	if len(v.CampaignImages) > 0 {
-	// 		fmt.Println(v.CampaignImages[0].FileName)
-	// 	}
-	// }
-
+	// log.Println(campaign)
 	// return
 
 	// http server
