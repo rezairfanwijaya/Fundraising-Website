@@ -5,7 +5,7 @@ import "gorm.io/gorm"
 // definisi kontrak
 type Repository interface {
 	FindAll() ([]Campaign, error)
-	FindByUserId(user_id int) ([]Campaign, error)
+	FindByUserId(userID int) ([]Campaign, error)
 }
 
 // struct internal
@@ -36,14 +36,14 @@ func (r *repository) FindAll() ([]Campaign, error) {
 }
 
 // func untuk mencari campaign berdasarkan id user
-func (r *repository) FindByUserId(user_id int) ([]Campaign, error) {
+func (r *repository) FindByUserId(userID int) ([]Campaign, error) {
 	// slice penampung campaign
 	var campaigns []Campaign
 
 	// query
 	// prealod akan mengambil tabel relasi yang dimiliki oleh tabel campaign yaitu tabel campaign_images
 	// untuk params pada preload itu yang pertama berupa nama field si struct entity campaignimages dan yang kedua adalah kondisi yang kita inginkan
-	err := r.db.Where("user_id = ?", user_id).Preload("CampaignImages", "campaign_images.is_primary=1").Find(&campaigns).Error
+	err := r.db.Where("user_id = ?", userID).Preload("CampaignImages", "campaign_images.is_primary=1").Find(&campaigns).Error
 	if err != nil {
 		return campaigns, err
 	}

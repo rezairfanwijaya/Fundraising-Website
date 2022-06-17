@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -9,7 +9,7 @@ import (
 	"github.com/dgrijalva/jwt-go/v4"
 	"github.com/gin-gonic/gin"
 	"github.com/rezairfanwijaya/Fundraising-Website/auth"
-	"github.com/rezairfanwijaya/Fundraising-Website/campaign"
+	// "github.com/rezairfanwijaya/Fundraising-Website/campaign"
 	"github.com/rezairfanwijaya/Fundraising-Website/handler"
 	"github.com/rezairfanwijaya/Fundraising-Website/helper"
 	user "github.com/rezairfanwijaya/Fundraising-Website/users"
@@ -34,19 +34,19 @@ func main() {
 	// handler user
 	userHandler := handler.NewUserHandler(userService, authService)
 
-	campaignRepo := campaign.NewRepository(db)
-	camp, err := campaignRepo.FindAll()
-	if err != nil {
-		log.Fatalf("error: %v", err)
-	}
+	// campaignRepo := campaign.NewRepository(db)
+	// camp, err := campaignRepo.FindAll()
+	// if err != nil {
+	// 	log.Fatalf("error: %v", err)
+	// }
 
-	for _, v := range camp {
-		if len(v.CampaignImages) > 0 {
-			fmt.Println(v.Name, v.CampaignImages[0].FileName)
-		} else {
-			fmt.Println(v.Name)
-		}
-	}
+	// for _, v := range camp {
+	// 	if len(v.CampaignImages) > 0 {
+	// 		fmt.Println(v.Name, v.CampaignImages[0].FileName)
+	// 	} else {
+	// 		fmt.Println(v.Name)
+	// 	}
+	// }
 
 	// id, err := campaignRepo.FindByUserId(1)
 	// if err != nil {
@@ -60,7 +60,7 @@ func main() {
 	// 	}
 	// }
 
-	return
+	// return
 
 	// http server
 	router := gin.Default()
@@ -110,7 +110,7 @@ func authMiddleware(authService auth.Service, userService user.Service) gin.Hand
 		// ambil data dalam token
 		claim, ok := token.Claims.(jwt.MapClaims)
 		if !ok || !token.Valid {
-			respons := helper.ResponsAPI("Unauthorized hehe", "error", http.StatusUnauthorized, nil)
+			respons := helper.ResponsAPI("Unauthorized", "error", http.StatusUnauthorized, nil)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, respons)
 			return
 		}
