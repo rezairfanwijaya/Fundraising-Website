@@ -9,6 +9,7 @@ import (
 	"github.com/dgrijalva/jwt-go/v4"
 	"github.com/gin-gonic/gin"
 	"github.com/rezairfanwijaya/Fundraising-Website/auth"
+	"github.com/rezairfanwijaya/Fundraising-Website/campaign"
 
 	// "github.com/rezairfanwijaya/Fundraising-Website/campaign"
 	"github.com/rezairfanwijaya/Fundraising-Website/handler"
@@ -35,15 +36,12 @@ func main() {
 	// handler user
 	userHandler := handler.NewUserHandler(userService, authService)
 
-	// campaignRepo := campaign.NewRepository(db)
-	// campaignService := campaign.NewService(campaignRepo)
-	// campaign, err := campaignService.GetCampaigns(2)
-	// if err != nil {
-	// 	log.Fatalf("error: %v", err)
-	// }
-
-	// log.Println(campaign)
-	// return
+	// repo campaign
+	campaignRepo := campaign.NewRepository(db)
+	// service campaign
+	campaignService := campaign.NewService(campaignRepo)
+	// handler campaign
+	campaignHandler := handler.NewCampaignHandler(campaignService)
 
 	// http server
 	router := gin.Default()
@@ -54,6 +52,8 @@ func main() {
 	api.POST("/session", userHandler.LoginUser)
 	api.POST("/email", userHandler.CheckEmail)
 	api.POST("/avatar", authMiddleware(authService, userService), userHandler.UpdateAvatar)
+
+	api.GET("/campaigns", campaignHandler.GetCampaigns)
 
 	// run server
 	router.Run(":7070")
