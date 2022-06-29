@@ -43,7 +43,6 @@ func main() {
 	// handler campaign
 	campaignHandler := handler.NewCampaignHandler(campaignService)
 
-	return
 	// http server
 	router := gin.Default()
 
@@ -60,6 +59,7 @@ func main() {
 	api.POST("/avatar", authMiddleware(authService, userService), userHandler.UpdateAvatar)
 
 	api.GET("/campaigns", campaignHandler.GetCampaigns)
+	api.GET("/campaign/:id", campaignHandler.GetCampaign) // :id akan berisi dinamiss
 
 	// run server
 	router.Run(":7070")

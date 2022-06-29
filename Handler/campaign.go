@@ -39,3 +39,33 @@ func (h *campaignHandler) GetCampaigns(c *gin.Context) {
 	response := helper.ResponsAPI("List of campaigns", "success", http.StatusOK, campaign.FormatCampaigns(campaigns))
 	c.JSON(http.StatusOK, response)
 }
+
+// handler get campaign by id
+func (h *campaignHandler) GetCampaign(c *gin.Context) {
+	// output endpoint yang diharapkan ---> /api/campaign/1
+	// ambil input user
+	var input campaign.InputCampaignDetail
+
+	// binding via uri
+	err := c.ShouldBindUri(&input)
+	if err != nil {
+		response := helper.ResponsAPI("Get data failed", "Failed", http.StatusBadRequest, nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	// panggil service
+	campaign, err := h.service.GetCampaignById(input)
+	if err != nil {
+		data := gin.H{
+			"error": err.Error(),
+		}
+		response := helper.ResponsAPI("Get data failed", "Failed", http.StatusBadRequest, data)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := helper.ResponsAPI("Get data succes", "succes", http.StatusOK, campaign)
+	c.JSON(http.StatusOK, response)
+
+}

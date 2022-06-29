@@ -1,8 +1,6 @@
 package campaign
 
 import (
-	"log"
-
 	"gorm.io/gorm"
 )
 
@@ -65,7 +63,6 @@ func (r *repository) FindById(id int) (Campaign, error) {
 
 	// error handling
 	if err != nil {
-		log.Println("ERROR DISINI")
 		return campaign, err
 	}
 
