@@ -1,11 +1,16 @@
 package campaign
 
-import "gorm.io/gorm"
+import (
+	"log"
+
+	"gorm.io/gorm"
+)
 
 // definisi kontrak
 type Repository interface {
 	FindAll() ([]Campaign, error)
 	FindByUserId(userID int) ([]Campaign, error)
+	FindById(id int) (Campaign, error)
 }
 
 // struct internal
@@ -49,4 +54,21 @@ func (r *repository) FindByUserId(userID int) ([]Campaign, error) {
 	}
 
 	return campaigns, nil
+}
+
+func (r *repository) FindById(id int) (Campaign, error) {
+	// deklarasi return
+	var campaign Campaign
+
+	// query
+	err := r.db.Preload("User").Preload("CampaignImages").Where("id = ?", id).Find(&campaign).Error
+
+	// error handling
+	if err != nil {
+		log.Println("ERROR DISINI")
+		return campaign, err
+	}
+
+	// return
+	return campaign, nil
 }

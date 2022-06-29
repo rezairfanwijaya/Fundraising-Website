@@ -1,6 +1,9 @@
 package campaign
 
-import "time"
+import (
+	user "github.com/rezairfanwijaya/Fundraising-Website/users"
+	"time"
+)
 
 type Campaign struct {
 	Id               int
@@ -16,6 +19,7 @@ type Campaign struct {
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
 	CampaignImages   []CampaignImage // sebagai foreign key
+	User             user.User      // sebagai foreign key
 }
 
 type CampaignImage struct {
