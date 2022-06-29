@@ -1,8 +1,11 @@
 package campaign
 
+import "errors"
+
 // bikin kontrak
 type Service interface {
 	GetCampaigns(userID int) ([]Campaign, error)
+	GetCampaignById(input InputCampaignDetail) (Campaign, error)
 }
 
 // bikin struct untuk menampung repository (dependensi)
@@ -35,4 +38,18 @@ func (s *service) GetCampaigns(userID int) ([]Campaign, error) {
 	}
 
 	return campaigns, nil
+}
+
+// bikin function untuk mengambil data campaign berdasarakan id yang dikirim lewat endpoint
+func (s *service) GetCampaignById(input InputCampaignDetail) (Campaign, error) {
+	// panggil repo
+	campaign, err := s.repository.FindById(input.Id)
+
+	// error handling
+	if err != nil {
+		return campaign, errors.New("gagal mengambil data campaign")
+	}
+
+	// return
+	return campaign, nil
 }
