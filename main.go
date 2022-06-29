@@ -45,8 +45,13 @@ func main() {
 
 	// http server
 	router := gin.Default()
+
+	// route untuk mengakses gambar (static file)
+	router.Static("/images", "./images") // parameter pertama adalah endpoint nya dan yang ke dua adalah lokasi penyimpanan gambarnya
+
 	// api versioning
 	api := router.Group("api/v1")
+
 	// routing
 	api.POST("/user", userHandler.RegisterUser)
 	api.POST("/session", userHandler.LoginUser)
