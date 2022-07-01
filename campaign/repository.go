@@ -9,6 +9,7 @@ type Repository interface {
 	FindAll() ([]Campaign, error)
 	FindByUserId(userID int) ([]Campaign, error)
 	FindById(id int) (Campaign, error)
+	Save(campaign Campaign) (Campaign, error)
 }
 
 // struct internal
@@ -54,6 +55,7 @@ func (r *repository) FindByUserId(userID int) ([]Campaign, error) {
 	return campaigns, nil
 }
 
+// function untuk mencari campaign by id
 func (r *repository) FindById(id int) (Campaign, error) {
 	// deklarasi return
 	var campaign Campaign
@@ -67,5 +69,15 @@ func (r *repository) FindById(id int) (Campaign, error) {
 	}
 
 	// return
+	return campaign, nil
+}
+
+// function untuk menyimpan data campaign
+func (r *repository) Save(campaign Campaign) (Campaign, error) {
+	err := r.db.Create(&campaign).Error
+	if err != nil {
+		return campaign, err
+	}
+
 	return campaign, nil
 }
