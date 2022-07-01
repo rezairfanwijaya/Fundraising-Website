@@ -6,6 +6,7 @@ import "errors"
 type Service interface {
 	GetCampaigns(userID int) ([]Campaign, error)
 	GetCampaignById(input InputCampaignDetail) (Campaign, error)
+	CreateCampaign(input CreateCampaignInput) (Campaign, error)
 }
 
 // bikin struct untuk menampung repository (dependensi)
@@ -52,4 +53,27 @@ func (s *service) GetCampaignById(input InputCampaignDetail) (Campaign, error) {
 
 	// return
 	return campaign, nil
+}
+
+// function untuk membuat campaign
+func (s *service) CreateCampaign(input CreateCampaignInput) (Campaign, error) {
+	// inisiasi campaign
+	var campaign Campaign
+	campaign.Name = input.Name
+	campaign.ShortDescription = input.ShortDescription
+	campaign.Description = input.Description
+	campaign.Perks = input.Perks
+	campaign.GoalAmount = input.GoalAmount
+	campaign.UserId = input.User.Id
+
+	// pembuatan slug
+
+	// panggil repo
+	newCampaign, err := s.repository.Save(campaign)
+	if err != nil {
+		return newCampaign, errors.New("gagal menyimpan data campaign")
+	}
+
+	// return
+	return newCampaign, nil
 }
