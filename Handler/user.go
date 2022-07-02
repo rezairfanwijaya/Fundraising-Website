@@ -108,7 +108,7 @@ func (u *userHandler) LoginUser(c *gin.Context) {
 
 	// lalu masukan ke respons
 	response := helper.ResponsAPI("Login berhasil", "Sukses", http.StatusOK, formatUser)
-	c.JSON(http.StatusUnprocessableEntity, response)
+	c.JSON(http.StatusOK, response)
 }
 
 // handler check email
