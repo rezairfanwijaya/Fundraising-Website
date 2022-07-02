@@ -1,6 +1,11 @@
 package campaign
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+
+	"github.com/gosimple/slug"
+)
 
 // bikin kontrak
 type Service interface {
@@ -48,7 +53,7 @@ func (s *service) GetCampaignById(input InputCampaignDetail) (Campaign, error) {
 
 	// error handling
 	if err != nil {
-		return campaign, errors.New("gagal mengambil data campaign")
+		return campaign, errors.New("failed to get data campaign")
 	}
 
 	// return
@@ -67,11 +72,15 @@ func (s *service) CreateCampaign(input CreateCampaignInput) (Campaign, error) {
 	campaign.UserId = input.User.Id
 
 	// pembuatan slug
+	// slug harus unik, maka kita masukan user id dinama slug nya
+	// contoh : nama-campagin-10
+	slugCandidate := fmt.Sprintf("%v %v", input.Name, input.User.Id)
+	campaign.Slug = slug.Make(slugCandidate)
 
 	// panggil repo
 	newCampaign, err := s.repository.Save(campaign)
 	if err != nil {
-		return newCampaign, errors.New("gagal menyimpan data campaign")
+		return newCampaign, errors.New("failed to save new campaign")
 	}
 
 	// return
