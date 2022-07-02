@@ -57,6 +57,7 @@ func main() {
 	api.POST("/session", userHandler.LoginUser)
 	api.POST("/email", userHandler.CheckEmail)
 	api.POST("/avatar", authMiddleware(authService, userService), userHandler.UpdateAvatar)
+	api.POST("/campaign", authMiddleware(authService, userService), campaignHandler.CreateCampaign)
 
 	api.GET("/campaigns", campaignHandler.GetCampaigns)
 	api.GET("/campaign/:id", campaignHandler.GetCampaign) // :id akan berisi dinamiss
