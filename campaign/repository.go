@@ -10,6 +10,7 @@ type Repository interface {
 	FindByUserId(userID int) ([]Campaign, error)
 	FindById(id int) (Campaign, error)
 	Save(campaign Campaign) (Campaign, error)
+	Update(campaign Campaign) (Campaign, error)
 }
 
 // struct internal
@@ -75,6 +76,16 @@ func (r *repository) FindById(id int) (Campaign, error) {
 // function untuk menyimpan data campaign
 func (r *repository) Save(campaign Campaign) (Campaign, error) {
 	err := r.db.Create(&campaign).Error
+	if err != nil {
+		return campaign, err
+	}
+
+	return campaign, nil
+}
+
+// function untuk melakukan update campaign
+func (r *repository) Update(campaign Campaign) (Campaign, error) {
+	err := r.db.Save(&campaign).Error
 	if err != nil {
 		return campaign, err
 	}
