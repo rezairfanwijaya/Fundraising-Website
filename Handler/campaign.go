@@ -110,3 +110,51 @@ func (h *campaignHandler) CreateCampaign(c *gin.Context) {
 	response := helper.ResponsAPI("success to create campaign", "success", http.StatusOK, newCampaign)
 	c.JSON(http.StatusOK, response)
 }
+
+// hanlder update campaign
+func (h *campaignHandler) UpdateCampaign(c *gin.Context) {
+	// tanggap id dari uri
+	var inputID campaign.InputCampaignDetail
+
+	// binding
+	err := c.ShouldBindUri(&inputID)
+	if err != nil {
+		myErr := helper.ErrorFormater(err)
+		response := helper.ResponsAPI("failed to update campaign", "failed", http.StatusUnprocessableEntity, myErr)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	// tangkap data yang diedit oleh user
+	var inputData campaign.CreateCampaignInput
+
+	// binding
+	err = c.ShouldBindJSON(&inputData)
+	if err != nil {
+		myErr := helper.ErrorFormater(err)
+		response := helper.ResponsAPI("failed to update campaign", "failed", http.StatusUnprocessableEntity, myErr)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	// lalu masukan user id yang melakukan request, bisa diambil di context jwt
+	currentUser := c.MustGet("currentUser").(user.User)
+
+	// assign user yang request ke inputData user
+	inputData.User = currentUser
+
+	// panggil service
+	campaignUpdated, err := h.service.UpdateCampaign(inputID, inputData)
+	if err != nil {
+		data := gin.H{
+			"error": err.Error(),
+		}
+		response := helper.ResponsAPI("failed to update campaign", "failed", http.StatusUnprocessableEntity, data)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	response := helper.ResponsAPI("success to update campaign", "success", http.StatusOK, campaign.FormatCampaign(campaignUpdated))
+	c.JSON(http.StatusOK, response)
+
+}
