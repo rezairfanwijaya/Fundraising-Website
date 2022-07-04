@@ -12,6 +12,7 @@ type Service interface {
 	GetCampaigns(userID int) ([]Campaign, error)
 	GetCampaignById(input InputCampaignDetail) (Campaign, error)
 	CreateCampaign(input CreateCampaignInput) (Campaign, error)
+	UpdateCampaign(inputID InputCampaignDetail, inputData CreateCampaignInput) (Campaign, error)
 }
 
 // bikin struct untuk menampung repository (dependensi)
@@ -85,4 +86,34 @@ func (s *service) CreateCampaign(input CreateCampaignInput) (Campaign, error) {
 
 	// return
 	return newCampaign, nil
+}
+
+// function untuk melakukan update campaign
+func (s *service) UpdateCampaign(inputID InputCampaignDetail, inputData CreateCampaignInput) (Campaign, error) {
+	// tangkap id dan lakukan pencarian campaign by id
+	campaign, err := s.repository.FindById(inputID.Id)
+	if err != nil {
+		return campaign, errors.New("id campaign not found")
+	}
+
+	// lakukan pengecekan apakah campaign yang akan diupdate itu punya nya si user yang melakukan request, bisa dilakukan pengecekan by id
+	// rule : user tidak bisa mengupdate campaign kalau campaign itu bukan miliknya
+	if campaign.UserId != inputData.User.Id {
+		return campaign, errors.New("update not allowed, only owner campaign can update")
+	}
+
+	// jika ada maka lakukan mapping data
+	campaign.Name = inputData.Name
+	campaign.ShortDescription = inputData.ShortDescription
+	campaign.Description = inputData.Description
+	campaign.GoalAmount = inputData.GoalAmount
+	campaign.Perks = inputData.Perks
+
+	// lakukan update
+	campaingUpdated, err := s.repository.Update(campaign)
+	if err != nil {
+		return campaingUpdated, errors.New("failed update campaign")
+	}
+
+	return campaingUpdated, nil
 }
