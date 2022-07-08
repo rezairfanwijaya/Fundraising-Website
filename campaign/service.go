@@ -13,6 +13,7 @@ type Service interface {
 	GetCampaignById(input InputCampaignDetail) (Campaign, error)
 	CreateCampaign(input CreateCampaignInput) (Campaign, error)
 	UpdateCampaign(inputID InputCampaignDetail, inputData CreateCampaignInput) (Campaign, error)
+	SaveCampaignImage(input CreateCampaignImageInput, fileLocation string) (CampaignImage, error)
 }
 
 // bikin struct untuk menampung repository (dependensi)
@@ -116,4 +117,45 @@ func (s *service) UpdateCampaign(inputID InputCampaignDetail, inputData CreateCa
 	}
 
 	return campaingUpdated, nil
+}
+
+// function untuk upload campaign image
+func (s *service) SaveCampaignImage(input CreateCampaignImageInput, fileLocation string) (CampaignImage, error) {
+	// cek apakah user yang melakukan upload image adalah user yang memiliki campaign, kalau iya silahkan kalau bukan harus ditolak
+	campaign, err := s.repository.FindById(input.CampaignID)
+	if err != nil {
+		return CampaignImage{}, errors.New("campaign not found")
+	}
+
+	if campaign.UserId != input.User.Id {
+		return CampaignImage{}, errors.New("upload not allowed, only owner campaign can upload")
+	}
+
+	// cek apakah isPrimary adalah true, jika true maka kita ubah true sebelumnya jadi false
+	isPrimary := 0
+	if input.IsPrimary {
+		// jadikan gambar saat ini jadi true (primary)
+		isPrimary = 1
+
+		// dan gambar yang lain jadi flase (non primary)
+		_, err := s.repository.MarkAllImageAsNonPrimary(input.CampaignID)
+		if err != nil {
+			return CampaignImage{}, errors.New("failed to set primary image")
+		}
+	}
+
+	// jika sudah maka lakukan mapping
+	campaingImage := CampaignImage{}
+	campaingImage.CampaignId = input.CampaignID
+	campaingImage.FileName = fileLocation
+	campaingImage.IsPrimary = isPrimary
+
+	// lakukan save
+	newCampaingImage, err := s.repository.CreateImage(campaingImage)
+	if err != nil {
+		return newCampaingImage, errors.New("failed to upload campaign image")
+	}
+
+	return newCampaingImage, nil
+
 }
