@@ -11,6 +11,8 @@ type Repository interface {
 	FindById(id int) (Campaign, error)
 	Save(campaign Campaign) (Campaign, error)
 	Update(campaign Campaign) (Campaign, error)
+	CreateImage(campaignImage CampaignImage) (CampaignImage, error)
+	MarkAllImageAsNonPrimary(campaignID int) (bool, error)
 }
 
 // struct internal
@@ -91,4 +93,26 @@ func (r *repository) Update(campaign Campaign) (Campaign, error) {
 	}
 
 	return campaign, nil
+}
+
+// function untuk create campaign image
+func (r *repository) CreateImage(campaignImage CampaignImage) (CampaignImage, error) {
+	err := r.db.Create(&campaignImage).Error
+	if err != nil {
+		return campaignImage, err
+	}
+
+	return campaignImage, nil
+}
+
+// function untuk mengubah primary image jadi false
+func (r *repository) MarkAllImageAsNonPrimary(campaignID int) (bool, error) {
+	// UPDATE campaign_images SET is_primary = false WHERE campaign_id = 1
+
+	if err := r.db.Model(&CampaignImage{}).Where("campaign_id = ?", campaignID).Update("is_primary", false).Error; err != nil {
+		return false, err
+	}
+
+	return true, nil
+
 }
