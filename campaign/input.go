@@ -20,3 +20,10 @@ type CreateCampaignInput struct {
 	Perks            string `json:"perks" binding:"required"`
 	User             user.User
 }
+
+// struct input upload campaign image
+type CreateCampaignImageInput struct {
+	CampaignID int  `form:"campaign_id" binding:"required"`
+	IsPrimary  bool `form:"is_primary"` // jangan set binding required ketika tipe bool, karena pas kita assign false akan memunculkan error required tag
+	User       user.User
+}
