@@ -10,8 +10,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rezairfanwijaya/Fundraising-Website/auth"
 	"github.com/rezairfanwijaya/Fundraising-Website/campaign"
+	"github.com/rezairfanwijaya/Fundraising-Website/transaction"
 
-	// "github.com/rezairfanwijaya/Fundraising-Website/campaign"
 	"github.com/rezairfanwijaya/Fundraising-Website/handler"
 	"github.com/rezairfanwijaya/Fundraising-Website/helper"
 	user "github.com/rezairfanwijaya/Fundraising-Website/users"
@@ -43,6 +43,13 @@ func main() {
 	// handler campaign
 	campaignHandler := handler.NewCampaignHandler(campaignService)
 
+	// repo transaction
+	transactionRepo := transaction.NewRepository(db)
+	// service transaction
+	transactionService := transaction.NewService(transactionRepo, campaignRepo)
+	// hanlder transaction
+	transactionHandler := handler.NewTransactionHandler(transactionService)
+
 	// http server
 	router := gin.Default()
 
@@ -57,13 +64,14 @@ func main() {
 	api.POST("/session", userHandler.LoginUser)
 	api.POST("/email", userHandler.CheckEmail)
 	api.POST("/avatar", authMiddleware(authService, userService), userHandler.UpdateAvatar)
+
 	api.POST("/campaign", authMiddleware(authService, userService), campaignHandler.CreateCampaign)
 	api.POST("/campaign-images", authMiddleware(authService, userService), campaignHandler.UploadImage)
-
 	api.GET("/campaigns", campaignHandler.GetCampaigns)
 	api.GET("/campaign/:id", campaignHandler.GetCampaign) // :id akan berisi dinamiss
-
 	api.PUT("/campaign/:id", authMiddleware(authService, userService), campaignHandler.UpdateCampaign)
+
+	api.GET("/campaign/:id/transactions", authMiddleware(authService, userService), transactionHandler.GetCampaignTransactions) // :id akan berisi dinamiss
 
 	// run server
 	router.Run(":7070")
