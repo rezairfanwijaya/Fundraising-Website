@@ -3,6 +3,7 @@ package transaction
 import (
 	"time"
 
+	"github.com/rezairfanwijaya/Fundraising-Website/campaign"
 	user "github.com/rezairfanwijaya/Fundraising-Website/users"
 )
 
@@ -14,7 +15,8 @@ type Transaction struct {
 	Amount     int
 	Status     string
 	Code       string
-	User       user.User // foreign key
+	User       user.User         // foreign key
+	Campaign   campaign.Campaign // foreign key
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 }
