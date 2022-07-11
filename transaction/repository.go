@@ -5,6 +5,7 @@ import "gorm.io/gorm"
 // bikin kontrak
 type Repository interface {
 	GetByCampaignId(campaignId int) ([]Transaction, error)
+	GetByUserId(userId int) ([]Transaction, error)
 }
 
 // bikin internal struct
@@ -29,4 +30,19 @@ func (r *repository) GetByCampaignId(campaignId int) ([]Transaction, error) {
 	}
 
 	return transaction, nil
+}
+
+// function untuk mencari transaksi untuk user tertentu
+func (r *repository) GetByUserId(userId int) ([]Transaction, error) {
+	// definisi return
+	var transactions []Transaction
+
+	// query
+	err := r.db.Preload("Campaign.CampaignImages", "is_primary = 1").Where("user_id = ? ", userId).Find(&transactions).Error
+	if err != nil {
+		return transactions, err
+	}
+
+	// return
+	return transactions, nil
 }
