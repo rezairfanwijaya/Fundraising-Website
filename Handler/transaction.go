@@ -51,3 +51,24 @@ func (h *transactionHandler) GetCampaignTransactions(c *gin.Context) {
 	response := helper.ResponsAPI("success to get transaction", "success", http.StatusOK, transaction.FormatCampaignTransactions(transactions))
 	c.JSON(http.StatusOK, response)
 }
+
+// handler untuk mengambil data transaksi berdasrkan userid
+func (h *transactionHandler) GetTransactionByUserId(c *gin.Context){
+	// kita ambil data user yang melakukan request melalui JWT
+	currentUser := c.MustGet("currentUser").(user.User)
+	userId := currentUser.Id
+
+	// panggil service
+	transactions,err:=h.service.GetTransactionByUserId(userId)
+	if err != nil {
+		data := gin.H{"error": err.Error()}
+		response := helper.ResponsAPI("failed to get transaction", "failed", http.StatusUnprocessableEntity, data)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	// return
+	response := helper.ResponsAPI("success to get transaction", "success", http.StatusOK, transaction.FormatUserTransactions(transactions))
+	c.JSON(http.StatusOK, response)
+
+}
