@@ -9,6 +9,7 @@ import (
 // bikin kontrak
 type Service interface {
 	GetTransactionByCampaignId(input GetTransactionsCampaignInput) ([]Transaction, error)
+	GetTransactionByUserId(userId int) ([]Transaction, error)
 }
 
 // bikin internal struct untuk meletakan dependensi
@@ -41,5 +42,17 @@ func (s *service) GetTransactionByCampaignId(input GetTransactionsCampaignInput)
 		return transactions, errors.New("transaction not found")
 	}
 
+	return transactions, nil
+}
+
+// function untuk mengambil data transaksi berdasarkan userid
+func (s *service) GetTransactionByUserId(userId int) ([]Transaction, error) {
+	// panggil repo
+	transactions, err := s.repository.GetByUserId(userId)
+	if err != nil {
+		return transactions, errors.New("user id not found")
+	}
+
+	// return
 	return transactions, nil
 }
