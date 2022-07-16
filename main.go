@@ -72,6 +72,7 @@ func main() {
 	api.PUT("/campaign/:id", authMiddleware(authService, userService), campaignHandler.UpdateCampaign)
 
 	api.GET("/campaign/:id/transactions", authMiddleware(authService, userService), transactionHandler.GetCampaignTransactions) // :id akan berisi dinamiss
+	api.GET("/transactions", authMiddleware(authService, userService), transactionHandler.GetTransactionByUserId)
 
 	// run server
 	router.Run(":7070")
