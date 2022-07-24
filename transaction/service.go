@@ -10,6 +10,7 @@ import (
 type Service interface {
 	GetTransactionByCampaignId(input GetTransactionsCampaignInput) ([]Transaction, error)
 	GetTransactionByUserId(userId int) ([]Transaction, error)
+	CreateTransaction(input CreateTransactionInput) (Transaction, error)
 }
 
 // bikin internal struct untuk meletakan dependensi
@@ -55,4 +56,23 @@ func (s *service) GetTransactionByUserId(userId int) ([]Transaction, error) {
 
 	// return
 	return transactions, nil
+}
+
+// function untuk menyimpan data transaksi user
+func (s *service) CreateTransaction(input CreateTransactionInput) (Transaction, error) {
+	// asign value
+	transaction := Transaction{}
+	transaction.CampaignID = input.CampaignId
+	transaction.Amount = input.Amount
+	transaction.UserId = input.User.Id
+	transaction.Status = "pending"
+
+	// save data
+	newTransaction, err := s.repository.Save(transaction)
+	if err != nil {
+		return newTransaction, errors.New("failed to save transaction")
+	}
+
+	// return
+	return newTransaction, nil
 }
