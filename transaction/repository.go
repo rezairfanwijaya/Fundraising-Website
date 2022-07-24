@@ -6,6 +6,7 @@ import "gorm.io/gorm"
 type Repository interface {
 	GetByCampaignId(campaignId int) ([]Transaction, error)
 	GetByUserId(userId int) ([]Transaction, error)
+	Save(transaction Transaction) (Transaction, error)
 }
 
 // bikin internal struct
@@ -45,4 +46,14 @@ func (r *repository) GetByUserId(userId int) ([]Transaction, error) {
 
 	// return
 	return transactions, nil
+}
+
+// function untuk menyimpan data transaksi user
+func (r *repository) Save(transaction Transaction) (Transaction, error) {
+	err := r.db.Create(&transaction).Error
+	if err != nil {
+		return transaction, err
+	}
+
+	return transaction, nil
 }
