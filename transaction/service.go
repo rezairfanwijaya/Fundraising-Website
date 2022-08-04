@@ -2,6 +2,7 @@ package transaction
 
 import (
 	"errors"
+	"log"
 
 	"github.com/rezairfanwijaya/Fundraising-Website/campaign"
 )
@@ -60,6 +61,7 @@ func (s *service) GetTransactionByUserId(userId int) ([]Transaction, error) {
 
 // function untuk menyimpan data transaksi user
 func (s *service) CreateTransaction(input CreateTransactionInput) (Transaction, error) {
+	log.Println(input)
 	// asign value
 	transaction := Transaction{}
 	transaction.CampaignID = input.CampaignId
