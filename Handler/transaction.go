@@ -53,13 +53,13 @@ func (h *transactionHandler) GetCampaignTransactions(c *gin.Context) {
 }
 
 // handler untuk mengambil data transaksi berdasrkan userid
-func (h *transactionHandler) GetTransactionByUserId(c *gin.Context){
+func (h *transactionHandler) GetTransactionByUserId(c *gin.Context) {
 	// kita ambil data user yang melakukan request melalui JWT
 	currentUser := c.MustGet("currentUser").(user.User)
 	userId := currentUser.Id
 
 	// panggil service
-	transactions,err:=h.service.GetTransactionByUserId(userId)
+	transactions, err := h.service.GetTransactionByUserId(userId)
 	if err != nil {
 		data := gin.H{"error": err.Error()}
 		response := helper.ResponsAPI("failed to get transaction", "failed", http.StatusUnprocessableEntity, data)
@@ -71,4 +71,38 @@ func (h *transactionHandler) GetTransactionByUserId(c *gin.Context){
 	response := helper.ResponsAPI("success to get transaction", "success", http.StatusOK, transaction.FormatUserTransactions(transactions))
 	c.JSON(http.StatusOK, response)
 
+}
+
+// handler untuk membuat transaksi
+func (h *transactionHandler) CreateTransaction(c *gin.Context) {
+	// tampung input user
+	var input transaction.CreateTransactionInput
+
+	// binding
+	err := c.ShouldBindJSON(&input)
+	if err != nil {
+		myErr := helper.ErrorFormater(err)
+		response := helper.ResponsAPI("failed to create transaction", "failed", http.StatusUnprocessableEntity, myErr)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	// isi user ke variable input
+	currentUser := c.MustGet("currentUser").(user.User)
+	input.User = currentUser
+
+	// panggil service untuk membuat data transaksi baru
+	newTransaction, err := h.service.CreateTransaction(input)
+	if err != nil {
+		data := gin.H{
+			"error": err.Error(),
+		}
+		response := helper.ResponsAPI("failed to create new transaction", "failed", http.StatusUnprocessableEntity, data)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	// response sukses
+	response := helper.ResponsAPI("success create new transaction", "success", http.StatusOK, newTransaction)
+	c.JSON(http.StatusOK, response)
 }
