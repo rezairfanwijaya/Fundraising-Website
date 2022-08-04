@@ -73,6 +73,7 @@ func main() {
 
 	api.GET("/campaign/:id/transactions", authMiddleware(authService, userService), transactionHandler.GetCampaignTransactions) // :id akan berisi dinamiss
 	api.GET("/transactions", authMiddleware(authService, userService), transactionHandler.GetTransactionByUserId)
+	api.POST("/transactions", authMiddleware(authService, userService), transactionHandler.CreateTransaction)
 
 	// run server
 	router.Run(":7070")
@@ -130,6 +131,8 @@ func authMiddleware(authService auth.Service, userService user.Service) gin.Hand
 
 		// set context
 		c.Set("currentUser", user)
+
+		// panggil service untuk membuat transaction baru
 
 	}
 }
