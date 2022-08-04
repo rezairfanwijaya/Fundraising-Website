@@ -10,7 +10,7 @@ type GetTransactionsCampaignInput struct {
 
 // struct input untuk menyimpan input transaksi user
 type CreateTransactionInput struct {
-	Amount     int       `json:"amount"`
-	CampaignId int       `json:"campaign_id"`
-	User       user.User `json:"user"`
+	Amount     int       `json:"amount" binding:"required"`
+	CampaignId int       `json:"campaign_id" binding:"required"`
+	User       user.User `json:"user" binding:"required"`
 }
