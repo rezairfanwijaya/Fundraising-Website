@@ -76,7 +76,7 @@ func main() {
 	api.POST("/transactions", authMiddleware(authService, userService), transactionHandler.CreateTransaction)
 
 	// run server
-	router.Run(":7070")
+	router.Run("localhost:7070")
 }
 
 // function middleware auth
