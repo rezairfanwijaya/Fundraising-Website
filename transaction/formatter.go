@@ -12,16 +12,26 @@ type CamapaignTransactionFormatter struct {
 
 // stuct format response campaign transactin by user id
 type UserTransactionFormatter struct {
-	Id int `json:"id"`
-	Amount int `json:"amount"`
-	Status string `json:"status"`
-	CreatedAt time.Time `json:"created_at"`
-	Campaign CampaingFormatter `json:"campaign"` 
+	Id        int               `json:"id"`
+	Amount    int               `json:"amount"`
+	Status    string            `json:"status"`
+	CreatedAt time.Time         `json:"created_at"`
+	Campaign  CampaingFormatter `json:"campaign"`
 }
 
 type CampaingFormatter struct {
-	Name string `json:"name"`
+	Name     string `json:"name"`
 	ImageURL string `json:"image_url"`
+}
+
+type CreateTransactionFormatter struct {
+	Id         int    `json:"id"`
+	CampaignId int    `json:"campaign_id"`
+	UserId     int    `json:"user_id"`
+	Amount     int    `json:"amount"`
+	Status     string `json:"status"`
+	Code       string `json:"code"`
+	PaymentURL string `json:"payment_url"`
 }
 
 // function untuk format single campaign transaction transaction by campaign id
@@ -67,11 +77,11 @@ func FormatUserTransaction(transactions Transaction) UserTransactionFormatter {
 }
 
 // function untuk format many campaign transaction by user id
- func FormatUserTransactions(transactions []Transaction) []UserTransactionFormatter {
+func FormatUserTransactions(transactions []Transaction) []UserTransactionFormatter {
 	// definisi return
 	userTransactionsFormatter := []UserTransactionFormatter{}
 
-	// cek apakah ada data 
+	// cek apakah ada data
 	if len(transactions) == 0 {
 		return userTransactionsFormatter
 	}
@@ -84,4 +94,18 @@ func FormatUserTransaction(transactions Transaction) UserTransactionFormatter {
 
 	// return
 	return userTransactionsFormatter
- }
+}
+
+//  formater success create transaction
+func FormatCreateTransaction(transaction Transaction) CreateTransactionFormatter {
+	createTransactionFormatter := CreateTransactionFormatter{}
+	createTransactionFormatter.Id = transaction.Id
+	createTransactionFormatter.Amount = transaction.Amount
+	createTransactionFormatter.CampaignId = transaction.Campaign.Id
+	createTransactionFormatter.Code = transaction.Code
+	createTransactionFormatter.PaymentURL = transaction.PaymentURL
+	createTransactionFormatter.Status = transaction.Status
+	createTransactionFormatter.UserId = transaction.UserId
+
+	return createTransactionFormatter
+}
