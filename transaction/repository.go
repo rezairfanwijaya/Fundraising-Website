@@ -7,6 +7,7 @@ type Repository interface {
 	GetByCampaignId(campaignId int) ([]Transaction, error)
 	GetByUserId(userId int) ([]Transaction, error)
 	Save(transaction Transaction) (Transaction, error)
+	Update(transaction Transaction) (Transaction, error)
 }
 
 // bikin internal struct
@@ -52,6 +53,15 @@ func (r *repository) GetByUserId(userId int) ([]Transaction, error) {
 func (r *repository) Save(transaction Transaction) (Transaction, error) {
 	err := r.db.Create(&transaction).Error
 	if err != nil {
+		return transaction, err
+	}
+
+	return transaction, nil
+}
+
+// function update
+func (r *repository) Update(transaction Transaction) (Transaction, error) {
+	if err := r.db.Save(&transaction).Error; err != nil {
 		return transaction, err
 	}
 
