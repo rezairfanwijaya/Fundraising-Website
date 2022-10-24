@@ -1,6 +1,8 @@
 package helper
 
 import (
+	"fmt"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
 )
@@ -69,4 +71,9 @@ func GetENV(path string) (map[string]string, error) {
 	}
 
 	return env, nil
+}
+
+// generate code for create transaction
+func GenerateCodeTransaction(number int) string {
+	return fmt.Sprintf("abds-%v", number)
 }
