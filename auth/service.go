@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/dgrijalva/jwt-go/v4"
+	"github.com/rezairfanwijaya/Fundraising-Website/helper"
 )
 
 // bikin service
@@ -14,9 +15,6 @@ type Service interface {
 
 // bikin struct
 type jwtToken struct{}
-
-// secret KEY
-var KEY string = "fndjfndjbndknbkdjbk"
 
 // bikin newserive agar semua function bisa diakses dari package manapun
 func NewServiceAuth() *jwtToken {
@@ -32,8 +30,14 @@ func (s *jwtToken) GenerateToken(userId int) (string, error) {
 	// generate token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
 
+	// get secret key
+	env, err := helper.GetENV("./.env")
+	if err != nil {
+		return "", err
+	}
+
 	// tanda tangani token
-	signedToken, err := token.SignedString([]byte(KEY))
+	signedToken, err := token.SignedString([]byte(env["SECRET_KEY"]))
 	if err != nil {
 		return signedToken, err
 	}
@@ -52,8 +56,14 @@ func (s *jwtToken) ValidasiToken(token string) (*jwt.Token, error) {
 			return nil, errors.New("invalid token")
 		}
 
+		// get secret key
+		env, err := helper.GetENV("./.env")
+		if err != nil {
+			return "", err
+		}
+
 		// mengembalikan secret key
-		return []byte(KEY), nil
+		return []byte(env["SECRET_KEY"]), nil
 	})
 
 	if err != nil {
