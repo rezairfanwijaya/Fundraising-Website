@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/rezairfanwijaya/Fundraising-Website/campaign"
+	payment "github.com/rezairfanwijaya/Fundraising-Website/payment"
 )
 
 // bikin kontrak
@@ -15,13 +16,19 @@ type Service interface {
 
 // bikin internal struct untuk meletakan dependensi
 type service struct {
-	repository   Repository
-	campaignRepo campaign.Repository
+	repository     Repository
+	campaignRepo   campaign.Repository
+	paymentService payment.Service
 }
 
 // bikin new service untuk dipakai di main
-func NewService(repository Repository, campaignRepo campaign.Repository) *service {
-	return &service{repository, campaignRepo}
+func NewService(
+	repository Repository,
+	campaignRepo campaign.Repository,
+	paymentService payment.Service,
+
+) *service {
+	return &service{repository, campaignRepo, paymentService}
 }
 
 // function untuk mengambil data transaksi berdasarkan campaign id
@@ -71,6 +78,23 @@ func (s *service) CreateTransaction(input CreateTransactionInput) (Transaction, 
 	newTransaction, err := s.repository.Save(transaction)
 	if err != nil {
 		return newTransaction, errors.New("failed to save transaction")
+	}
+
+	// set payment transaction to get payment url
+	paymentTransaction := payment.Transaction{
+		Id:     newTransaction.Id,
+		Amount: newTransaction.Amount,
+	}
+	paymentURL, err := s.paymentService.GetPaymentURL(paymentTransaction, input.User)
+	if err != nil {
+		return newTransaction, err
+	}
+
+	// update paymentURL to table
+	newTransaction.PaymentURL = paymentURL
+	transactionWithPaymentURL, err := s.repository.Update(newTransaction)
+	if err != nil {
+		return transactionWithPaymentURL, err
 	}
 
 	// return
