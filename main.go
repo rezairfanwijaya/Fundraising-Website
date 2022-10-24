@@ -2,6 +2,7 @@ package main
 
 import (
 	// "fmt"
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -20,8 +21,17 @@ import (
 )
 
 func main() {
+	env, err := helper.GetENV(".env")
+	if err != nil {
+		log.Fatal(err)
+	}
+	username := env["USERNAME"]
+	host := env["HOST"]
+	port := env["PORT"]
+	dbName := env["DATABASE_NAME"]
+
 	// connect ke database
-	dsn := "root@tcp(127.0.0.1:3306)/fundraishing?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := fmt.Sprintf("%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", username, host, port, dbName)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err.Error())
