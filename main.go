@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rezairfanwijaya/Fundraising-Website/auth"
 	"github.com/rezairfanwijaya/Fundraising-Website/campaign"
+	"github.com/rezairfanwijaya/Fundraising-Website/payment"
 	"github.com/rezairfanwijaya/Fundraising-Website/transaction"
 
 	"github.com/rezairfanwijaya/Fundraising-Website/handler"
@@ -53,10 +54,13 @@ func main() {
 	// handler campaign
 	campaignHandler := handler.NewCampaignHandler(campaignService)
 
+	// payment service
+	paymentService := payment.NewService()
+
 	// repo transaction
 	transactionRepo := transaction.NewRepository(db)
 	// service transaction
-	transactionService := transaction.NewService(transactionRepo, campaignRepo)
+	transactionService := transaction.NewService(transactionRepo, campaignRepo, paymentService)
 	// hanlder transaction
 	transactionHandler := handler.NewTransactionHandler(transactionService)
 
