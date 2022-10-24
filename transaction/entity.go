@@ -15,6 +15,7 @@ type Transaction struct {
 	Amount     int
 	Status     string
 	Code       string
+	PaymentURL string
 	User       user.User         // foreign key
 	Campaign   campaign.Campaign // foreign key
 	CreatedAt  time.Time
