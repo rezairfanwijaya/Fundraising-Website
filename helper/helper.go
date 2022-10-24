@@ -1,6 +1,9 @@
 package helper
 
-import "github.com/go-playground/validator/v10"
+import (
+	"github.com/go-playground/validator/v10"
+	"github.com/joho/godotenv"
+)
 
 // disini kita akan membuat response dari json ketika user berhasil ataupun gagal meng-hit endpoint yang telah disediakan
 
@@ -56,4 +59,14 @@ func ErrorFormater(err error) []string {
 	}
 
 	return myerror
+}
+
+// get env value
+func GetENV(path string) (map[string]string, error) {
+	env, err := godotenv.Read(path)
+	if err != nil {
+		return env, err
+	}
+
+	return env, nil
 }
