@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/rezairfanwijaya/Fundraising-Website/campaign"
+	"github.com/rezairfanwijaya/Fundraising-Website/helper"
 	payment "github.com/rezairfanwijaya/Fundraising-Website/payment"
 )
 
@@ -92,6 +93,8 @@ func (s *service) CreateTransaction(input CreateTransactionInput) (Transaction, 
 
 	// update paymentURL to table
 	newTransaction.PaymentURL = paymentURL
+	code := helper.GenerateCodeTransaction(newTransaction.Id)
+	newTransaction.Code = code
 	transactionWithPaymentURL, err := s.repository.Update(newTransaction)
 	if err != nil {
 		return transactionWithPaymentURL, err
