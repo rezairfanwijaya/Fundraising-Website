@@ -6,8 +6,9 @@ require github.com/veritrans/go-midtrans v0.0.0-20210616100512-16326c5eeb00
 
 require (
 	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1 // indirect
+	github.com/gin-contrib/cors v1.4.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/gin-gonic/gin v1.8.0 // indirect
+	github.com/gin-gonic/gin v1.8.1 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.11.0 // indirect
