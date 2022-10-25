@@ -187,3 +187,11 @@ func (u *userHandler) UpdateAvatar(c *gin.Context) {
 	c.JSON(http.StatusOK, respons)
 
 }
+
+// handle untuk mendapatkan user yang sedang login
+func (u *userHandler) FetchUser(c *gin.Context) {
+	currentUser := c.MustGet("currentUser").(user.User)
+	userFormat := user.UserFormatter(currentUser, "")
+	response := helper.ResponsAPI("success get current user", "success", http.StatusOK, userFormat)
+	c.JSON(http.StatusOK, response)
+}
