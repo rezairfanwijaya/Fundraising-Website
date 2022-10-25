@@ -80,6 +80,7 @@ func main() {
 	api.POST("/session", userHandler.LoginUser)
 	api.POST("/email", userHandler.CheckEmail)
 	api.POST("/avatar", authMiddleware(authService, userService), userHandler.UpdateAvatar)
+	api.GET("/user/fetch", authMiddleware(authService, userService), userHandler.FetchUser)
 
 	api.POST("/campaign", authMiddleware(authService, userService), campaignHandler.CreateCampaign)
 	api.POST("/campaign-images", authMiddleware(authService, userService), campaignHandler.UploadImage)
@@ -93,7 +94,7 @@ func main() {
 	api.POST("/transactions/notification", authMiddleware(authService, userService), transactionHandler.GetPaymentNotification)
 
 	// run server
-	router.Run("localhost:7070")
+	router.Run(":7070")
 }
 
 // function middleware auth
