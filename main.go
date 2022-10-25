@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/dgrijalva/jwt-go/v4"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/rezairfanwijaya/Fundraising-Website/auth"
 	"github.com/rezairfanwijaya/Fundraising-Website/campaign"
@@ -65,6 +66,8 @@ func main() {
 
 	// http server
 	router := gin.Default()
+	// allow cors policy
+	router.Use(cors.Default())
 
 	// route untuk mengakses gambar (static file)
 	router.Static("/images", "./images") // parameter pertama adalah endpoint nya dan yang ke dua adalah lokasi penyimpanan gambarnya
