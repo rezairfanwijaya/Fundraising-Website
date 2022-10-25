@@ -87,6 +87,7 @@ func main() {
 	api.GET("/campaign/:id/transactions", authMiddleware(authService, userService), transactionHandler.GetCampaignTransactions) // :id akan berisi dinamiss
 	api.GET("/transactions", authMiddleware(authService, userService), transactionHandler.GetTransactionByUserId)
 	api.POST("/transactions", authMiddleware(authService, userService), transactionHandler.CreateTransaction)
+	api.POST("/transactions/notification", authMiddleware(authService, userService), transactionHandler.GetPaymentNotification)
 
 	// run server
 	router.Run("localhost:7070")
