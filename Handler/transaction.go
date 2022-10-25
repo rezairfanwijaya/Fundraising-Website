@@ -111,3 +111,29 @@ func (h *transactionHandler) CreateTransaction(c *gin.Context) {
 	)
 	c.JSON(http.StatusOK, response)
 }
+
+// handler untuk handle notif pembayaran dari midtrans
+func (h *transactionHandler) GetPaymentNotification(c *gin.Context) {
+	// tangkap input
+	var input transaction.MidtransNotifications
+
+	// binding
+	err := c.ShouldBindJSON(&input)
+	if err != nil {
+		myErr := helper.ErrorFormater(err)
+		response := helper.ResponsAPI("failed to get notification", "failed", http.StatusBadRequest, myErr)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	// panggil service
+	err = h.service.ProsesPayment(input)
+	if err != nil {
+		myErr := helper.ResponsAPI("failed to get notification", "failed", http.StatusInternalServerError, err)
+		c.JSON(http.StatusInternalServerError, myErr)
+		return
+	}
+
+	// success
+	c.JSON(http.StatusOK, input)
+}
