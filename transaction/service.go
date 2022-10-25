@@ -2,10 +2,11 @@ package transaction
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/rezairfanwijaya/Fundraising-Website/campaign"
 	"github.com/rezairfanwijaya/Fundraising-Website/helper"
-	payment "github.com/rezairfanwijaya/Fundraising-Website/payment"
+	"github.com/rezairfanwijaya/Fundraising-Website/payment"
 )
 
 // bikin kontrak
@@ -13,6 +14,7 @@ type Service interface {
 	GetTransactionByCampaignId(input GetTransactionsCampaignInput) ([]Transaction, error)
 	GetTransactionByUserId(userId int) ([]Transaction, error)
 	CreateTransaction(input CreateTransactionInput) (Transaction, error)
+	ProsesPayment(input MidtransNotifications) error
 }
 
 // bikin internal struct untuk meletakan dependensi
@@ -102,4 +104,53 @@ func (s *service) CreateTransaction(input CreateTransactionInput) (Transaction, 
 
 	// return
 	return newTransaction, nil
+}
+
+// function untuk handle notifikasi pembayaran dari midtrans ketika user berhasil melakukan pembayaran
+func (s *service) ProsesPayment(input MidtransNotifications) error {
+	// get transaction by id from midtrans notification
+	transaction_id, _ := strconv.Atoi(input.OrderId)
+	transaction, err := s.repository.GetById(transaction_id)
+	if err != nil {
+		return err
+	}
+
+	// handle status
+	if input.PaymentType == "credit_card" &&
+		input.TransactionStatus == "capture" &&
+		input.FraudStatus == "accept" {
+		transaction.Status = "paid"
+	} else if input.TransactionStatus == "settlement" {
+		transaction.Status = "paid"
+	} else if input.TransactionStatus == "deny" ||
+		input.TransactionStatus == "expire" ||
+		input.TransactionStatus == "cancel" {
+		transaction.Status = "cancelled"
+	}
+
+	// update transaction with new status
+	transactionUpdated, err := s.repository.Update(transaction)
+	if err != nil {
+		return err
+	}
+
+	// find campaign to update that
+	campaign, err := s.campaignRepo.FindById(transactionUpdated.CampaignID)
+	if err != nil {
+		return err
+	}
+
+	// cek status transaction from transactionUpdated
+	// and update campaign
+	if transactionUpdated.Status == "paid" {
+		campaign.BackerCount = campaign.BackerCount + 1
+		campaign.CurrentAmount = campaign.CurrentAmount + transactionUpdated.Amount
+		_, err := s.campaignRepo.Update(campaign)
+		if err != nil {
+			return err
+		}
+	}
+
+	// success
+	return nil
 }
