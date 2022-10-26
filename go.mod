@@ -1,5 +1,6 @@
 module github.com/rezairfanwijaya/Fundraising-Website
 
+// +heroku goVersion go1.17
 go 1.17
 
 require github.com/veritrans/go-midtrans v0.0.0-20210616100512-16326c5eeb00
